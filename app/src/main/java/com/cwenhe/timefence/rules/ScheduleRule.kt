@@ -4,7 +4,7 @@ import java.time.DayOfWeek
 import java.time.ZonedDateTime
 
 /**
- * 表示一条按设备本地星期和分钟重复的应用限制规则。
+ * 表示一条按设备本地星期、业务日历和分钟重复的应用限制规则。
  *
  * @property id 数据库唯一标识，尚未持久化时为 0。
  * @property name 用户可识别的规则名称。
@@ -14,6 +14,9 @@ import java.time.ZonedDateTime
  * @property packages 需要限制的应用包名集合。
  * @property enabled 是否参与生效计算。
  * @property lockWhileActive 生效期间是否禁止在时界内修改规则。
+ * @property calendarMode 规则使用的每周、法定工作日或 A 股交易日模式。
+ * @property notificationMessage 命中规则时显示和朗读的自定义文本。
+ * @property speakNotification 是否允许本规则触发语音播报。
  */
 data class ScheduleRule(
     val id: Long,
@@ -24,6 +27,9 @@ data class ScheduleRule(
     val packages: Set<String>,
     val enabled: Boolean,
     val lockWhileActive: Boolean,
+    val calendarMode: CalendarMode = CalendarMode.WEEKLY,
+    val notificationMessage: String = "",
+    val speakNotification: Boolean = false,
 ) {
     init {
         require(startMinute in MINUTE_OF_DAY_RANGE) { "startMinute 必须在 0..1439 范围内" }
@@ -46,4 +52,10 @@ data class RuleEvaluation(
     val activeRules: List<ScheduleRule>,
     val blockedPackages: Set<String>,
     val nextBoundary: ZonedDateTime?,
+)
+
+/** 只包含当前生效结果的轻量求值，供无障碍窗口热路径使用。 */
+data class ActiveRuleEvaluation(
+    val activeRules: List<ScheduleRule>,
+    val blockedPackages: Set<String>,
 )

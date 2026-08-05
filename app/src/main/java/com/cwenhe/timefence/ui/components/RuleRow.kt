@@ -24,7 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.cwenhe.timefence.rules.ScheduleRule
 import com.cwenhe.timefence.ui.formatMinuteOfDay
-import com.cwenhe.timefence.ui.formatWeekdays
+import com.cwenhe.timefence.ui.formatSchedule
 
 /** 展示单条规则，并提供稳定尺寸的启停和编辑入口。 */
 @Composable
@@ -66,7 +66,7 @@ fun RuleRow(
                 }
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    text = "${formatMinuteOfDay(rule.startMinute)} - ${formatMinuteOfDay(rule.endMinute)}  ·  ${formatWeekdays(rule.days)}  ·  ${rule.packages.size} 个应用",
+                    text = "${formatMinuteOfDay(rule.startMinute)} - ${formatMinuteOfDay(rule.endMinute)}  ·  ${formatSchedule(rule)}  ·  ${rule.packages.size} 个应用",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,

@@ -103,12 +103,19 @@ fun TimeFenceApp(viewModel: TimeFenceViewModel) {
             composable(ROUTE_SETTINGS) {
                 SettingsScreen(
                     status = state.permissions,
+                    calendarStatus = state.calendarStatus,
+                    today = state.now.toLocalDate(),
+                    speechSettings = state.speechSettings,
                     onAccessibility = viewModel::openAccessibilitySettings,
                     onExactAlarm = viewModel::openExactAlarmSettings,
                     onNotifications = viewModel::openNotificationSettings,
                     onBattery = viewModel::openBatterySettings,
                     onHonorBackground = viewModel::openHonorBackgroundSettings,
                     onAppDetails = viewModel::openAppDetailsSettings,
+                    onSyncCalendar = viewModel::syncCalendar,
+                    onSpeechEnabled = viewModel::setSpeechEnabled,
+                    onSpeechLanguage = viewModel::setSpeechLanguage,
+                    onTextToSpeechSettings = viewModel::openTextToSpeechSettings,
                 )
             }
             composable(ROUTE_EDITOR) { entry ->
@@ -119,6 +126,7 @@ fun TimeFenceApp(viewModel: TimeFenceViewModel) {
                     installedApps = state.installedApps,
                     appsLoading = state.appsLoading,
                     locked = existingRule?.let(viewModel::isRuleLocked) ?: false,
+                    calendarStatus = state.calendarStatus,
                     onBack = navController::navigateUp,
                     onSave = { rule ->
                         viewModel.saveRule(rule) { navController.navigateUp() }

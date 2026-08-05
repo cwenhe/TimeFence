@@ -5,6 +5,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import com.cwenhe.timefence.calendar.CalendarSnapshot
 import android.os.Build
 import com.cwenhe.timefence.rules.ScheduleEvaluator
 import com.cwenhe.timefence.rules.ScheduleRule
@@ -25,10 +26,14 @@ class BoundaryAlarmScheduler(
 
     /** 取消旧边界并按最新规则注册下一条，缺少精确授权时降级为允许休眠的非精确闹钟。 */
     @SuppressLint("ScheduleExactAlarm")
-    fun reschedule(rules: List<ScheduleRule>, now: ZonedDateTime = ZonedDateTime.now()) {
+    fun reschedule(
+        rules: List<ScheduleRule>,
+        now: ZonedDateTime = ZonedDateTime.now(),
+        calendar: CalendarSnapshot = CalendarSnapshot.empty(),
+    ) {
         val operation = boundaryPendingIntent()
         alarmManager.cancel(operation)
-        val nextBoundary = scheduleEvaluator.evaluate(now, rules).nextBoundary ?: return
+        val nextBoundary = scheduleEvaluator.evaluate(now, rules, calendar).nextBoundary ?: return
         val triggerAtMillis = nextBoundary.toInstant().toEpochMilli()
         if (canScheduleExactAlarms()) {
             try {

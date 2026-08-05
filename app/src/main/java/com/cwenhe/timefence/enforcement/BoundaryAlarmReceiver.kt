@@ -21,10 +21,19 @@ class BoundaryAlarmReceiver : BroadcastReceiver() {
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
             try {
                 val container = (context.applicationContext as TimeFenceApplication).container
+                container.calendarRepository.initialize()
                 val rules = container.scheduleRepository.getRules()
-                container.boundaryAlarmScheduler.reschedule(rules, ZonedDateTime.now())
+                container.boundaryAlarmScheduler.reschedule(
+                    rules = rules,
+                    now = ZonedDateTime.now(),
+                    calendar = container.calendarRepository.snapshot.value,
+                )
                 val permissions = container.permissionStatusRepository.refresh()
-                container.protectionNotifier.update(rules, permissions)
+                container.protectionNotifier.update(
+                    rules = rules,
+                    permissions = permissions,
+                    calendar = container.calendarRepository.snapshot.value,
+                )
             } catch (error: Exception) {
                 Log.e(TAG, "处理规则边界失败", error)
             } finally {

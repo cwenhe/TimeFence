@@ -13,9 +13,6 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.cwenhe.timefence.R
-import com.cwenhe.timefence.rules.ScheduleRule
-import java.time.ZonedDateTime
-import java.util.Locale
 
 /**
  * 使用短时无障碍覆盖层说明本次拦截，不获取焦点且不长期遮挡桌面。
@@ -28,16 +25,10 @@ internal class BlockOverlay(private val service: AccessibilityService) {
     private var attachedView: View? = null
     private val dismissRunnable = Runnable { dismiss() }
 
-    /** 展示命中包名对应、结束最晚的活动规则，并在四秒后自动关闭。 */
-    fun show(activeRules: List<ScheduleRule>, packageName: String) {
-        val now = ZonedDateTime.now()
-        val rule = activeRules
-            .asSequence()
-            .filter { packageName in it.packages }
-            .maxByOrNull { remainingMinutes(it, now) }
-            ?: return
+    /** 展示统一反馈文本，并在四秒后自动关闭。 */
+    fun show(feedback: BlockFeedback) {
         dismiss()
-        val view = createOverlayView(rule)
+        val view = createOverlayView(feedback)
         try {
             windowManager.addView(view, createLayoutParams())
             attachedView = view
@@ -55,8 +46,8 @@ internal class BlockOverlay(private val service: AccessibilityService) {
         runCatching { windowManager.removeViewImmediate(view) }
     }
 
-    /** 构建包含规则名、结束时间和关闭图标的紧凑提示条。 */
-    private fun createOverlayView(rule: ScheduleRule): View {
+    /** 构建包含规则名、自定义提示和关闭图标的紧凑提示条。 */
+    private fun createOverlayView(feedback: BlockFeedback): View {
         val root = LinearLayout(service).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
@@ -72,12 +63,12 @@ internal class BlockOverlay(private val service: AccessibilityService) {
             orientation = LinearLayout.VERTICAL
         }
         textColumn.addView(TextView(service).apply {
-            text = rule.name.ifBlank { service.getString(R.string.block_overlay_default_rule) }
+            text = feedback.ruleName.ifBlank { service.getString(R.string.block_overlay_default_rule) }
             setTextColor(Color.WHITE)
             textSize = 16f
         })
         textColumn.addView(TextView(service).apply {
-            text = service.getString(R.string.block_overlay_until, formatEndMinute(rule.endMinute))
+            text = feedback.text
             setTextColor(Color.rgb(221, 224, 226))
             textSize = 14f
         })
@@ -109,33 +100,11 @@ internal class BlockOverlay(private val service: AccessibilityService) {
         horizontalMargin = 0.04f
     }
 
-    /** 计算活动规则从当前时刻到结束边界的分钟数，用于选择结束最晚的规则。 */
-    private fun remainingMinutes(rule: ScheduleRule, now: ZonedDateTime): Int {
-        val currentMinute = now.hour * MINUTES_PER_HOUR + now.minute
-        return if (rule.startMinute < rule.endMinute) {
-            rule.endMinute - currentMinute
-        } else if (currentMinute >= rule.startMinute) {
-            MINUTES_PER_DAY - currentMinute + rule.endMinute
-        } else {
-            rule.endMinute - currentMinute
-        }
-    }
-
-    /** 将领域模型中的日内分钟转换为本地化的 `HH:mm` 文本。 */
-    private fun formatEndMinute(endMinute: Int): String = String.format(
-        Locale.getDefault(),
-        "%02d:%02d",
-        endMinute / MINUTES_PER_HOUR,
-        endMinute % MINUTES_PER_HOUR,
-    )
-
     /** 把 dp 转为当前设备密度下的整数像素。 */
     private fun dp(value: Int): Int =
         (value * service.resources.displayMetrics.density).toInt()
 
     companion object {
         private const val DISPLAY_DURATION_MILLIS = 4_000L
-        private const val MINUTES_PER_HOUR = 60
-        private const val MINUTES_PER_DAY = 24 * MINUTES_PER_HOUR
     }
 }

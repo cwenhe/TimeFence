@@ -29,11 +29,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.cwenhe.timefence.rules.CalendarMode
 import com.cwenhe.timefence.rules.RuleEvaluation
 import com.cwenhe.timefence.rules.ScheduleRule
 import com.cwenhe.timefence.ui.TimeFenceUiState
 import com.cwenhe.timefence.ui.components.RuleRow
 import com.cwenhe.timefence.ui.formatMinuteOfDay
+import com.cwenhe.timefence.ui.isRuleScheduledOn
 import com.cwenhe.timefence.ui.remainingRuleMinutes
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -74,7 +76,9 @@ fun DashboardScreen(
                     fontWeight = FontWeight.SemiBold,
                 )
             }
-            val todayRules = state.rules.filter { state.now.dayOfWeek in it.days }
+            val todayRules = state.rules.filter { rule ->
+                isRuleScheduledOn(rule, state.now.toLocalDate(), state.calendarSnapshot)
+            }
             if (todayRules.isEmpty()) {
                 item {
                     EmptyTodayRules()
@@ -102,13 +106,18 @@ private fun ProtectionStatusBand(
 ) {
     val active = state.evaluation.activeRules
     val ready = state.permissions.protectionReady
+    val calendarNeedsUpdate = state.rules.any { rule ->
+        rule.enabled && rule.calendarMode != CalendarMode.WEEKLY
+    } && !state.calendarStatus.covers(state.now.toLocalDate())
     val background = when {
         !ready -> MaterialTheme.colorScheme.secondaryContainer
+        calendarNeedsUpdate && active.isEmpty() -> MaterialTheme.colorScheme.secondaryContainer
         active.isNotEmpty() -> MaterialTheme.colorScheme.tertiary
         else -> MaterialTheme.colorScheme.primaryContainer
     }
     val foreground = when {
         !ready -> MaterialTheme.colorScheme.onSecondaryContainer
+        calendarNeedsUpdate && active.isEmpty() -> MaterialTheme.colorScheme.onSecondaryContainer
         active.isNotEmpty() -> MaterialTheme.colorScheme.onTertiary
         else -> MaterialTheme.colorScheme.onPrimaryContainer
     }
@@ -122,6 +131,7 @@ private fun ProtectionStatusBand(
             Icon(
                 imageVector = when {
                     !ready -> Icons.Outlined.ReportProblem
+                    calendarNeedsUpdate && active.isEmpty() -> Icons.Outlined.ReportProblem
                     active.isNotEmpty() -> Icons.Outlined.Timer
                     else -> Icons.Outlined.CheckCircle
                 },
@@ -135,6 +145,7 @@ private fun ProtectionStatusBand(
                 Text(
                     text = when {
                         !ready -> "保护未就绪"
+                        calendarNeedsUpdate && active.isEmpty() -> "日历需要更新"
                         active.isNotEmpty() -> "限制生效中"
                         else -> "保护已就绪"
                     },
@@ -143,11 +154,16 @@ private fun ProtectionStatusBand(
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    text = statusDetail(state.evaluation, state.now, ready),
+                    text = statusDetail(
+                        evaluation = state.evaluation,
+                        now = state.now,
+                        ready = ready,
+                        calendarNeedsUpdate = calendarNeedsUpdate,
+                    ),
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
-            if (!ready) {
+            if (!ready || (calendarNeedsUpdate && active.isEmpty())) {
                 Button(onClick = onOpenSettings) {
                     Text("去设置")
                 }
@@ -161,11 +177,17 @@ private fun statusDetail(
     evaluation: RuleEvaluation,
     now: java.time.ZonedDateTime,
     ready: Boolean,
+    calendarNeedsUpdate: Boolean,
 ): String {
     if (!ready) return "完成系统权限后才能准时拦截"
+    if (calendarNeedsUpdate && evaluation.activeRules.isEmpty()) {
+        return "工作日与交易日规则暂不执行"
+    }
     if (evaluation.activeRules.isNotEmpty()) {
         val lastRule = evaluation.activeRules.maxBy { rule -> remainingRuleMinutes(rule, now) }
-        return "${evaluation.blockedPackages.size} 个应用，最晚至 ${formatMinuteOfDay(lastRule.endMinute)}"
+        val activeDetail =
+            "${evaluation.blockedPackages.size} 个应用，最晚至 ${formatMinuteOfDay(lastRule.endMinute)}"
+        return if (calendarNeedsUpdate) "$activeDetail；部分日历规则暂停" else activeDetail
     }
     return evaluation.nextBoundary?.let { boundary ->
         "下次边界 ${boundary.format(NEXT_BOUNDARY_FORMATTER)}"

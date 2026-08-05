@@ -1,0 +1,1848 @@
+{
+  "schemaVersion": 1,
+  "revision": 2026080601,
+  "locale": "zh-CN",
+  "generatedAt": "2026-08-06T00:00:00Z",
+  "years": [
+    {
+      "year": 2026,
+      "complete": true,
+      "sources": {
+        "workday": [
+          "https://www.gov.cn/zhengce/zhengceku/202511/content_7047091.htm"
+        ],
+        "tradingDay": [
+          "https://www.sse.com.cn/disclosure/announcement/general/c/c_20251222_10802507.shtml",
+          "https://www.szse.cn/disclosure/notice/general/t20251222_618087.html"
+        ]
+      },
+      "days": [
+        {
+          "date": "2026-01-01",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-01-02",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-01-03",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-01-04",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-01-05",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-01-06",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-01-07",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-01-08",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-01-09",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-01-10",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-01-11",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-01-12",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-01-13",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-01-14",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-01-15",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-01-16",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-01-17",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-01-18",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-01-19",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-01-20",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-01-21",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-01-22",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-01-23",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-01-24",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-01-25",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-01-26",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-01-27",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-01-28",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-01-29",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-01-30",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-01-31",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-02-01",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-02-02",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-02-03",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-02-04",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-02-05",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-02-06",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-02-07",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-02-08",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-02-09",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-02-10",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-02-11",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-02-12",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-02-13",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-02-14",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-02-15",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-02-16",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-02-17",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-02-18",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-02-19",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-02-20",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-02-21",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-02-22",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-02-23",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-02-24",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-02-25",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-02-26",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-02-27",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-02-28",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-03-01",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-03-02",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-03-03",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-03-04",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-03-05",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-03-06",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-03-07",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-03-08",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-03-09",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-03-10",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-03-11",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-03-12",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-03-13",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-03-14",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-03-15",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-03-16",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-03-17",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-03-18",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-03-19",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-03-20",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-03-21",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-03-22",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-03-23",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-03-24",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-03-25",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-03-26",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-03-27",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-03-28",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-03-29",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-03-30",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-03-31",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-04-01",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-04-02",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-04-03",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-04-04",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-04-05",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-04-06",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-04-07",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-04-08",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-04-09",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-04-10",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-04-11",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-04-12",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-04-13",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-04-14",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-04-15",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-04-16",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-04-17",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-04-18",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-04-19",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-04-20",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-04-21",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-04-22",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-04-23",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-04-24",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-04-25",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-04-26",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-04-27",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-04-28",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-04-29",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-04-30",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-05-01",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-05-02",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-05-03",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-05-04",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-05-05",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-05-06",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-05-07",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-05-08",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-05-09",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-05-10",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-05-11",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-05-12",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-05-13",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-05-14",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-05-15",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-05-16",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-05-17",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-05-18",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-05-19",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-05-20",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-05-21",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-05-22",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-05-23",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-05-24",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-05-25",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-05-26",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-05-27",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-05-28",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-05-29",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-05-30",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-05-31",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-06-01",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-06-02",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-06-03",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-06-04",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-06-05",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-06-06",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-06-07",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-06-08",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-06-09",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-06-10",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-06-11",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-06-12",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-06-13",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-06-14",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-06-15",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-06-16",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-06-17",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-06-18",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-06-19",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-06-20",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-06-21",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-06-22",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-06-23",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-06-24",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-06-25",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-06-26",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-06-27",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-06-28",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-06-29",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-06-30",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-07-01",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-07-02",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-07-03",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-07-04",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-07-05",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-07-06",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-07-07",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-07-08",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-07-09",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-07-10",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-07-11",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-07-12",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-07-13",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-07-14",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-07-15",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-07-16",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-07-17",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-07-18",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-07-19",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-07-20",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-07-21",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-07-22",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-07-23",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-07-24",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-07-25",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-07-26",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-07-27",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-07-28",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-07-29",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-07-30",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-07-31",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-08-01",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-08-02",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-08-03",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-08-04",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-08-05",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-08-06",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-08-07",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-08-08",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-08-09",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-08-10",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-08-11",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-08-12",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-08-13",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-08-14",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-08-15",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-08-16",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-08-17",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-08-18",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-08-19",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-08-20",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-08-21",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-08-22",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-08-23",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-08-24",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-08-25",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-08-26",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-08-27",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-08-28",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-08-29",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-08-30",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-08-31",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-09-01",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-09-02",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-09-03",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-09-04",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-09-05",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-09-06",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-09-07",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-09-08",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-09-09",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-09-10",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-09-11",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-09-12",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-09-13",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-09-14",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-09-15",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-09-16",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-09-17",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-09-18",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-09-19",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-09-20",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-09-21",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-09-22",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-09-23",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-09-24",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-09-25",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-09-26",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-09-27",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-09-28",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-09-29",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-09-30",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-10-01",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-10-02",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-10-03",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-10-04",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-10-05",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-10-06",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-10-07",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-10-08",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-10-09",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-10-10",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-10-11",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-10-12",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-10-13",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-10-14",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-10-15",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-10-16",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-10-17",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-10-18",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-10-19",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-10-20",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-10-21",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-10-22",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-10-23",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-10-24",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-10-25",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-10-26",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-10-27",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-10-28",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-10-29",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-10-30",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-10-31",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-11-01",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-11-02",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-11-03",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-11-04",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-11-05",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-11-06",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-11-07",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-11-08",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-11-09",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-11-10",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-11-11",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-11-12",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-11-13",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-11-14",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-11-15",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-11-16",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-11-17",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-11-18",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-11-19",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-11-20",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-11-21",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-11-22",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-11-23",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-11-24",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-11-25",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-11-26",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-11-27",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-11-28",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-11-29",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-11-30",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-12-01",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-12-02",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-12-03",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-12-04",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-12-05",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-12-06",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-12-07",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-12-08",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-12-09",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-12-10",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-12-11",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-12-12",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-12-13",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-12-14",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-12-15",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-12-16",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-12-17",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-12-18",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-12-19",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-12-20",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-12-21",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-12-22",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-12-23",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-12-24",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-12-25",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-12-26",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-12-27",
+          "isStatutoryWorkday": false,
+          "isAShareTradingDay": false
+        },
+        {
+          "date": "2026-12-28",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-12-29",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-12-30",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        },
+        {
+          "date": "2026-12-31",
+          "isStatutoryWorkday": true,
+          "isAShareTradingDay": true
+        }
+      ]
+    }
+  ]
+}

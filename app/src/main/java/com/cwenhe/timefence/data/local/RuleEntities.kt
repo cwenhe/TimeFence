@@ -7,7 +7,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 
-/** 保存一条规则的时间、星期和开关状态。 */
+/** 保存一条规则的时间、日期模式、自定义提示和开关状态。 */
 @Entity(tableName = "rules")
 data class RuleEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
@@ -17,6 +17,9 @@ data class RuleEntity(
     val daysMask: Int,
     val enabled: Boolean,
     val lockWhileActive: Boolean,
+    val scheduleMode: String,
+    val notificationMessage: String,
+    val speakNotification: Boolean,
 )
 
 /** 保存规则与受限应用包名的多对多关联。 */

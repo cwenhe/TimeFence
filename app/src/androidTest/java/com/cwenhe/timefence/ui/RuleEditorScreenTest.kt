@@ -4,10 +4,15 @@ import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextClearance
+import androidx.compose.ui.test.performTextInput
+import com.cwenhe.timefence.rules.CalendarMode
 import com.cwenhe.timefence.rules.ScheduleRule
 import com.cwenhe.timefence.ui.editor.RuleEditorScreen
 import java.time.DayOfWeek
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -58,6 +63,90 @@ class RuleEditorScreenTest {
         }
 
         composeRule.onNodeWithText("保存规则").assertIsNotEnabled()
+    }
+
+    /** 工作日规则不依赖星期多选，也可以保存完整模式。 */
+    @Test
+    fun `工作日规则无需选择星期`() {
+        var saved: ScheduleRule? = null
+        composeRule.setContent {
+            TimeFenceTheme {
+                RuleEditorScreen(
+                    existingRule = validRule().copy(
+                        days = emptySet(),
+                        calendarMode = CalendarMode.CN_STATUTORY_WORKDAY,
+                    ),
+                    installedApps = emptyList(),
+                    appsLoading = false,
+                    locked = false,
+                    onBack = {},
+                    onSave = { saved = it },
+                    onDelete = {},
+                )
+            }
+        }
+
+        composeRule.onNodeWithText("保存规则").assertIsEnabled().performClick()
+
+        assertEquals(CalendarMode.CN_STATUTORY_WORKDAY, saved?.calendarMode)
+    }
+
+    /** 自定义文本和规则级语音开关在未编辑时能够无损保存。 */
+    @Test
+    fun `提示配置可以保存`() {
+        var saved: ScheduleRule? = null
+        composeRule.setContent {
+            TimeFenceTheme {
+                RuleEditorScreen(
+                    existingRule = validRule().copy(
+                        notificationMessage = "{rule} 已限制 {app}",
+                        speakNotification = true,
+                    ),
+                    installedApps = emptyList(),
+                    appsLoading = false,
+                    locked = false,
+                    onBack = {},
+                    onSave = { saved = it },
+                    onDelete = {},
+                )
+            }
+        }
+
+        composeRule.onNodeWithText("保存规则").performClick()
+
+        assertEquals("{rule} 已限制 {app}", saved?.notificationMessage)
+        assertTrue(saved?.speakNotification == true)
+    }
+
+    /** 验证用户可切换交易日、输入提示、查看预览并开启规则级语音。 */
+    @Test
+    fun `交易日提示与语音可以交互保存`() {
+        var saved: ScheduleRule? = null
+        composeRule.setContent {
+            TimeFenceTheme {
+                RuleEditorScreen(
+                    existingRule = validRule(),
+                    installedApps = emptyList(),
+                    appsLoading = false,
+                    locked = false,
+                    onBack = {},
+                    onSave = { saved = it },
+                    onDelete = {},
+                )
+            }
+        }
+
+        composeRule.onNodeWithText("交易日").performClick()
+        val notificationInput = composeRule.onNodeWithTag("notification-message-input")
+        notificationInput.performTextClearance()
+        notificationInput.performTextInput("{app} 暂停至 {until}")
+        composeRule.onNodeWithText("预览：demo.app 暂停至 10:00").assertExists()
+        composeRule.onNodeWithTag("rule-speech-toggle").performClick()
+        composeRule.onNodeWithText("保存规则").performClick()
+
+        assertEquals(CalendarMode.CN_A_SHARE_TRADING_DAY, saved?.calendarMode)
+        assertEquals("{app} 暂停至 {until}", saved?.notificationMessage)
+        assertTrue(saved?.speakNotification == true)
     }
 
     /** 构造表单字段完整的固定测试规则。 */

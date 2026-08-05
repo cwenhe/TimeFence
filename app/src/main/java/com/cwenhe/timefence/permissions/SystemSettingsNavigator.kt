@@ -49,6 +49,12 @@ class SystemSettingsNavigator(context: Context) {
     /** 打开应用详情页，也是 Android 13 侧载应用“允许受限设置”的入口。 */
     fun openAppDetailsSettings(): Boolean = startSafely(appDetailsIntent())
 
+    /** 打开厂商语音合成设置，无法解析时回退到系统声音设置。 */
+    fun openTextToSpeechSettings(): Boolean = startSafely(
+        primary = Intent(ACTION_TEXT_TO_SPEECH_SETTINGS),
+        fallback = Intent(Settings.ACTION_SOUND_SETTINGS),
+    )
+
     /** 优先探测荣耀或华为后台启动管理页，不可用时回退到标准电池优化页。 */
     fun openHonorBackgroundSettings(): Boolean {
         val candidates = listOf(
@@ -97,5 +103,9 @@ class SystemSettingsNavigator(context: Context) {
         return fallback != null && runCatching {
             appContext.startActivity(fallback.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         }.isSuccess
+    }
+
+    private companion object {
+        const val ACTION_TEXT_TO_SPEECH_SETTINGS = "com.android.settings.TTS_SETTINGS"
     }
 }

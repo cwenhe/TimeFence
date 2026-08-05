@@ -4,6 +4,7 @@ import com.cwenhe.timefence.data.local.RuleAppEntity
 import com.cwenhe.timefence.data.local.RuleDao
 import com.cwenhe.timefence.data.local.RuleEntity
 import com.cwenhe.timefence.data.local.RuleWithApps
+import com.cwenhe.timefence.rules.CalendarMode
 import com.cwenhe.timefence.rules.ScheduleRule
 import java.time.DayOfWeek
 import kotlinx.coroutines.flow.Flow
@@ -23,9 +24,13 @@ class ScheduleRepository(private val ruleDao: RuleDao) {
     suspend fun saveRule(rule: ScheduleRule): Long {
         require(rule.name.isNotBlank()) { "规则名称不能为空" }
         require(rule.startMinute != rule.endMinute) { "开始时间不能等于结束时间" }
-        require(rule.days.isNotEmpty()) { "至少选择一天" }
+        require(rule.calendarMode != CalendarMode.WEEKLY || rule.days.isNotEmpty()) { "至少选择一天" }
         require(rule.packages.isNotEmpty()) { "至少选择一个应用" }
         require(rule.packages.all { it.isNotBlank() }) { "应用包名不能为空" }
+        val message = rule.notificationMessage.trim()
+        require(message.codePointCount(0, message.length) <= MAX_NOTIFICATION_MESSAGE_CODE_POINTS) {
+            "提示文本不能超过 $MAX_NOTIFICATION_MESSAGE_CODE_POINTS 个字符"
+        }
         val stored = rule.copy(name = rule.name.trim()).toStoredRule()
         return ruleDao.replaceRule(stored.entity, stored.packages)
     }
@@ -57,6 +62,9 @@ internal fun ScheduleRule.toStoredRule(): StoredRule = StoredRule(
         daysMask = days.fold(0) { mask, day -> mask or (1 shl (day.value - 1)) },
         enabled = enabled,
         lockWhileActive = lockWhileActive,
+        scheduleMode = calendarMode.name,
+        notificationMessage = notificationMessage.trim(),
+        speakNotification = speakNotification,
     ),
     packages = packages.map(String::trim).distinct().sorted(),
 )
@@ -73,4 +81,10 @@ internal fun RuleWithApps.toDomainRule(): ScheduleRule = ScheduleRule(
     packages = apps.mapTo(linkedSetOf(), RuleAppEntity::packageName),
     enabled = rule.enabled,
     lockWhileActive = rule.lockWhileActive,
+    calendarMode = runCatching { CalendarMode.valueOf(rule.scheduleMode) }
+        .getOrDefault(CalendarMode.WEEKLY),
+    notificationMessage = rule.notificationMessage,
+    speakNotification = rule.speakNotification,
 )
+
+private const val MAX_NOTIFICATION_MESSAGE_CODE_POINTS = 120

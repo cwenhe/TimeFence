@@ -1,6 +1,10 @@
 package com.cwenhe.timefence.ui
 
+import com.cwenhe.timefence.calendar.CalendarMatch
+import com.cwenhe.timefence.calendar.CalendarSnapshot
+import com.cwenhe.timefence.rules.CalendarMode
 import com.cwenhe.timefence.rules.ScheduleRule
+import java.time.LocalDate
 import java.time.DayOfWeek
 import java.time.ZonedDateTime
 import java.util.Locale
@@ -21,6 +25,25 @@ fun formatWeekdays(days: Set<DayOfWeek>): String {
     return DayOfWeek.entries
         .filter(days::contains)
         .joinToString(" ") { day -> WEEKDAY_LABELS.getValue(day) }
+}
+
+/** 按规则模式格式化每周、法定工作日或 A 股交易日摘要。 */
+fun formatSchedule(rule: ScheduleRule): String = when (rule.calendarMode) {
+    CalendarMode.WEEKLY -> formatWeekdays(rule.days)
+    CalendarMode.CN_STATUTORY_WORKDAY -> "法定工作日"
+    CalendarMode.CN_A_SHARE_TRADING_DAY -> "A 股交易日"
+}
+
+/** 判断规则是否属于给定自然日，未知日历日期不显示为今日规则。 */
+fun isRuleScheduledOn(
+    rule: ScheduleRule,
+    date: LocalDate,
+    calendar: CalendarSnapshot,
+): Boolean = when (rule.calendarMode) {
+    CalendarMode.WEEKLY -> date.dayOfWeek in rule.days
+    CalendarMode.CN_STATUTORY_WORKDAY,
+    CalendarMode.CN_A_SHARE_TRADING_DAY,
+    -> calendar.match(rule.calendarMode, date) == CalendarMatch.MATCH
 }
 
 /** 计算跨午夜规则距离本次结束还剩多少分钟。 */

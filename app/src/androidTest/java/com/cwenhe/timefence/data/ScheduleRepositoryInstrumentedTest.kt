@@ -4,6 +4,7 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.cwenhe.timefence.data.local.TimeFenceDatabase
+import com.cwenhe.timefence.rules.CalendarMode
 import com.cwenhe.timefence.rules.ScheduleRule
 import java.time.DayOfWeek
 import kotlinx.coroutines.runBlocking
@@ -77,5 +78,8 @@ class ScheduleRepositoryInstrumentedTest {
         packages = setOf("video.app", "chat.app"),
         enabled = true,
         lockWhileActive = false,
+        calendarMode = CalendarMode.CN_STATUTORY_WORKDAY,
+        notificationMessage = "午休结束后再打开",
+        speakNotification = true,
     )
 }

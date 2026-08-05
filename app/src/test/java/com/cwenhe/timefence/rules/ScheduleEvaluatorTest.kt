@@ -1,5 +1,7 @@
 package com.cwenhe.timefence.rules
 
+import com.cwenhe.timefence.calendar.CalendarSnapshot
+import com.cwenhe.timefence.data.local.CalendarDayEntity
 import java.time.DayOfWeek
 import java.time.ZoneOffset
 import java.time.ZoneId
@@ -185,12 +187,62 @@ class ScheduleEvaluatorTest {
         assertFalse("demo.app" in evaluator.evaluate(newYorkTime, listOf(rule)).blockedPackages)
     }
 
+    /** 验证调休周末可以触发工作日规则，但不触发 A 股交易日规则。 */
+    @Test
+    fun `工作日和交易日使用独立日历状态`() {
+        val calendar = calendarSnapshot()
+        val workdayRule = rule(
+            startMinute = 8 * 60,
+            endMinute = 10 * 60,
+            days = emptySet(),
+            calendarMode = CalendarMode.CN_STATUTORY_WORKDAY,
+        )
+        val tradingDayRule = workdayRule.copy(
+            id = 2,
+            calendarMode = CalendarMode.CN_A_SHARE_TRADING_DAY,
+        )
+
+        assertTrue("demo.app" in evaluator.evaluate(at(8, 0, day = 4), listOf(workdayRule), calendar).blockedPackages)
+        assertFalse("demo.app" in evaluator.evaluate(at(8, 0, day = 4), listOf(tradingDayRule), calendar).blockedPackages)
+        assertTrue("demo.app" in evaluator.evaluate(at(8, 0, day = 5), listOf(tradingDayRule), calendar).blockedPackages)
+    }
+
+    /** 验证交易日跨午夜时仍按开始日判断，并在次日结束边界结束。 */
+    @Test
+    fun `交易日跨午夜规则归属于开始日期`() {
+        val calendar = calendarSnapshot()
+        val rule = rule(
+            startMinute = 22 * 60,
+            endMinute = 7 * 60,
+            days = emptySet(),
+            calendarMode = CalendarMode.CN_A_SHARE_TRADING_DAY,
+        )
+
+        assertTrue("demo.app" in evaluator.evaluate(at(23, 0, day = 5), listOf(rule), calendar).blockedPackages)
+        assertTrue("demo.app" in evaluator.evaluate(at(6, 59, day = 6), listOf(rule), calendar).blockedPackages)
+        assertFalse("demo.app" in evaluator.evaluate(at(7, 0, day = 6), listOf(rule), calendar).blockedPackages)
+    }
+
+    /** 验证日历覆盖范围外不会把未知日期猜成工作日或交易日。 */
+    @Test
+    fun `未知日历日期不激活规则`() {
+        val rule = rule(
+            startMinute = 8 * 60,
+            endMinute = 10 * 60,
+            days = emptySet(),
+            calendarMode = CalendarMode.CN_STATUTORY_WORKDAY,
+        )
+
+        assertTrue(evaluator.evaluate(at(8, 0, day = 6), listOf(rule), CalendarSnapshot.empty()).blockedPackages.isEmpty())
+    }
+
     /** 创建仅在测试日期所属星期生效的规则。 */
     private fun rule(
         startMinute: Int,
         endMinute: Int,
         days: Set<DayOfWeek> = setOf(DayOfWeek.MONDAY),
         packages: Set<String> = setOf("demo.app"),
+        calendarMode: CalendarMode = CalendarMode.WEEKLY,
     ): ScheduleRule = ScheduleRule(
         id = 1,
         name = "测试规则",
@@ -200,6 +252,17 @@ class ScheduleEvaluatorTest {
         packages = packages,
         enabled = true,
         lockWhileActive = false,
+        calendarMode = calendarMode,
+    )
+
+    /** 构造覆盖 2026-01-01 至 2026-01-05 的最小日历快照供求值测试使用。 */
+    private fun calendarSnapshot(): CalendarSnapshot = CalendarSnapshot.fromEntities(
+        listOf(
+            CalendarDayEntity("2026-01-01", false, false, 1, 0),
+            CalendarDayEntity("2026-01-04", true, false, 1, 0),
+            CalendarDayEntity("2026-01-05", true, true, 1, 0),
+            CalendarDayEntity("2026-01-06", true, true, 1, 0),
+        ),
     )
 
     /** 创建 2026 年首个星期一的指定本地时刻。 */

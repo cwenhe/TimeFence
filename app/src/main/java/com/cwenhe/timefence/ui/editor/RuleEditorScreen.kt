@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.VolumeUp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Apps
 import androidx.compose.material.icons.outlined.ChevronRight
@@ -44,16 +45,19 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.cwenhe.timefence.apps.InstalledApp
+import com.cwenhe.timefence.calendar.CalendarStatus
+import com.cwenhe.timefence.rules.CalendarMode
 import com.cwenhe.timefence.rules.ScheduleRule
 import com.cwenhe.timefence.ui.formatMinuteOfDay
 import com.cwenhe.timefence.ui.picker.AppPickerScreen
 import java.time.DayOfWeek
 
-/** 编辑规则的时间、星期、应用和生效期间锁定选项。 */
+/** 编辑规则的时间、日期模式、应用、自定义提示、语音和锁定选项。 */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RuleEditorScreen(
@@ -61,6 +65,7 @@ fun RuleEditorScreen(
     installedApps: List<InstalledApp>,
     appsLoading: Boolean,
     locked: Boolean,
+    calendarStatus: CalendarStatus = CalendarStatus.initial(),
     onBack: () -> Unit,
     onSave: (ScheduleRule) -> Unit,
     onDelete: (ScheduleRule) -> Unit,
@@ -80,6 +85,15 @@ fun RuleEditorScreen(
     }
     var lockWhileActive by rememberSaveable(existingRule?.id) {
         mutableStateOf(existingRule?.lockWhileActive ?: false)
+    }
+    var calendarModeName by rememberSaveable(existingRule?.id) {
+        mutableStateOf(existingRule?.calendarMode?.name ?: CalendarMode.WEEKLY.name)
+    }
+    var notificationMessage by rememberSaveable(existingRule?.id) {
+        mutableStateOf(existingRule?.notificationMessage.orEmpty())
+    }
+    var speakNotification by rememberSaveable(existingRule?.id) {
+        mutableStateOf(existingRule?.speakNotification ?: false)
     }
     var showAppPicker by rememberSaveable { mutableStateOf(false) }
     var showStartPicker by rememberSaveable { mutableStateOf(false) }
@@ -105,8 +119,10 @@ fun RuleEditorScreen(
     }
 
     val days = maskToDays(daysMask)
+    val calendarMode = runCatching { CalendarMode.valueOf(calendarModeName) }
+        .getOrDefault(CalendarMode.WEEKLY)
     val valid = name.isNotBlank() && startMinute != endMinute &&
-        days.isNotEmpty() && selectedPackages.isNotEmpty()
+        (calendarMode != CalendarMode.WEEKLY || days.isNotEmpty()) && selectedPackages.isNotEmpty()
     Scaffold(
         topBar = {
             TopAppBar(
@@ -157,7 +173,9 @@ fun RuleEditorScreen(
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("notification-message-input"),
                 label = { Text("规则名称") },
                 placeholder = { Text("例如：夜间休息") },
                 singleLine = true,
@@ -196,16 +214,43 @@ fun RuleEditorScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                DayOfWeek.entries.forEach { day ->
-                    val selected = day in days
-                    DayToggle(
-                        selected = selected,
-                        onClick = { daysMask = toggleDay(daysMask, day) },
-                        label = { Text(DAY_LABELS.getValue(day)) },
+                CALENDAR_MODE_LABELS.forEach { (mode, label) ->
+                    ModeToggle(
+                        selected = calendarMode == mode,
+                        onClick = { calendarModeName = mode.name },
+                        label = label,
                         enabled = !locked,
                         modifier = Modifier.weight(1f),
                     )
                 }
+            }
+            Spacer(Modifier.height(8.dp))
+            if (calendarMode == CalendarMode.WEEKLY) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    DayOfWeek.entries.forEach { day ->
+                        val selected = day in days
+                        DayToggle(
+                            selected = selected,
+                            onClick = { daysMask = toggleDay(daysMask, day) },
+                            label = { Text(DAY_LABELS.getValue(day)) },
+                            enabled = !locked,
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
+                }
+            } else {
+                Text(
+                    text = calendarModeDescription(calendarMode, calendarStatus),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (calendarStatus.coveredTo == null) {
+                        MaterialTheme.colorScheme.error
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
+                )
             }
             SectionLabel("应用")
             Row(
@@ -230,6 +275,74 @@ fun RuleEditorScreen(
                     )
                 }
                 Icon(Icons.Outlined.ChevronRight, contentDescription = "选择应用")
+            }
+            SectionLabel("拦截提示")
+            OutlinedTextField(
+                value = notificationMessage,
+                onValueChange = { value ->
+                    if (value.codePointCount(0, value.length) <= MAX_NOTIFICATION_CODE_POINTS) {
+                        notificationMessage = value
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("提示文本") },
+                placeholder = { Text(DEFAULT_NOTIFICATION_MESSAGE) },
+                supportingText = {
+                    Text("${notificationMessage.codePointCount(0, notificationMessage.length)}/$MAX_NOTIFICATION_CODE_POINTS")
+                },
+                minLines = 2,
+                maxLines = 4,
+                enabled = !locked,
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                PLACEHOLDERS.forEach { placeholder ->
+                    TextButton(
+                        onClick = { notificationMessage = appendPlaceholder(notificationMessage, placeholder) },
+                        enabled = !locked && notificationMessage.length + placeholder.length <= MAX_NOTIFICATION_CODE_POINTS,
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        Text(placeholder)
+                    }
+                }
+            }
+            Text(
+                text = "预览：" + notificationPreview(
+                    template = notificationMessage,
+                    ruleName = name.ifBlank { "规则名称" },
+                    appName = selectedPreviewAppName(selectedPackages, installedApps),
+                    endMinute = endMinute,
+                ),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(64.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(Icons.AutoMirrored.Outlined.VolumeUp, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 14.dp),
+                ) {
+                    Text("语音播报", style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        "返回桌面后朗读本条提示",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                Switch(
+                    checked = speakNotification,
+                    onCheckedChange = { speakNotification = it },
+                    enabled = !locked,
+                    modifier = Modifier.testTag("rule-speech-toggle"),
+                )
             }
             SectionLabel("保护")
             Row(
@@ -270,6 +383,9 @@ fun RuleEditorScreen(
                             packages = selectedPackages.toSet(),
                             enabled = existingRule?.enabled ?: true,
                             lockWhileActive = lockWhileActive,
+                            calendarMode = calendarMode,
+                            notificationMessage = notificationMessage.trim(),
+                            speakNotification = speakNotification,
                         ),
                     )
                 },
@@ -352,6 +468,37 @@ private fun DayToggle(
     ) {
         Box(contentAlignment = Alignment.Center) {
             label()
+        }
+    }
+}
+
+/** 展示三等分的重复方式单选项，保持窄屏布局稳定。 */
+@Composable
+private fun ModeToggle(
+    selected: Boolean,
+    onClick: () -> Unit,
+    label: String,
+    enabled: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        modifier = modifier
+            .height(44.dp)
+            .clickable(enabled = enabled, role = Role.RadioButton, onClick = onClick),
+        shape = MaterialTheme.shapes.small,
+        color = if (selected) {
+            MaterialTheme.colorScheme.primaryContainer
+        } else {
+            MaterialTheme.colorScheme.surfaceVariant
+        },
+        contentColor = if (selected) {
+            MaterialTheme.colorScheme.onPrimaryContainer
+        } else {
+            MaterialTheme.colorScheme.onSurfaceVariant
+        },
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            Text(label, style = MaterialTheme.typography.labelLarge)
         }
     }
 }
@@ -459,11 +606,59 @@ private fun selectedAppSummary(
     }
 }
 
+/** 根据模式和同步状态生成规则编辑页的日历覆盖说明。 */
+private fun calendarModeDescription(mode: CalendarMode, status: CalendarStatus): String {
+    val prefix = when (mode) {
+        CalendarMode.CN_STATUTORY_WORKDAY -> "按中国法定工作日（含调休）生效"
+        CalendarMode.CN_A_SHARE_TRADING_DAY -> "按沪深交易所共同开市日生效"
+        CalendarMode.WEEKLY -> return ""
+    }
+    val coverage = if (status.coveredFrom != null && status.coveredTo != null) {
+        "日历覆盖 ${status.coveredFrom} 至 ${status.coveredTo}"
+    } else {
+        "日历尚未加载，未知日期不会生效"
+    }
+    return "$prefix；$coverage"
+}
+
+/** 在提示文本末尾追加占位符，并在空文本时避免多余空格。 */
+private fun appendPlaceholder(value: String, placeholder: String): String =
+    if (value.isBlank()) placeholder else "$value $placeholder"
+
+/** 使用当前表单值替换提示占位符，给用户展示保存前预览。 */
+private fun notificationPreview(
+    template: String,
+    ruleName: String,
+    appName: String,
+    endMinute: Int,
+): String = template.trim()
+    .ifBlank { DEFAULT_NOTIFICATION_MESSAGE }
+    .replace("{rule}", ruleName)
+    .replace("{app}", appName)
+    .replace("{until}", formatMinuteOfDay(endMinute))
+
+/** 选择首个受限应用名称作为预览，无法解析时回退包名或通用文本。 */
+private fun selectedPreviewAppName(
+    packages: List<String>,
+    apps: List<InstalledApp>,
+): String {
+    val packageName = packages.firstOrNull() ?: return "受限应用"
+    return apps.firstOrNull { app -> app.packageName == packageName }?.label ?: packageName
+}
+
 private const val MINUTES_PER_HOUR = 60
 private const val DEFAULT_START_MINUTE = 22 * MINUTES_PER_HOUR
 private const val DEFAULT_END_MINUTE = 7 * MINUTES_PER_HOUR
 private const val MAX_VISIBLE_APP_NAMES = 2
+private const val MAX_NOTIFICATION_CODE_POINTS = 120
+private const val DEFAULT_NOTIFICATION_MESSAGE = "已限制{app}，{until}前不可使用"
 private val DEFAULT_DAYS = DayOfWeek.entries.toSet()
+private val PLACEHOLDERS = listOf("{rule}", "{app}", "{until}")
+private val CALENDAR_MODE_LABELS = listOf(
+    CalendarMode.WEEKLY to "每周",
+    CalendarMode.CN_STATUTORY_WORKDAY to "工作日",
+    CalendarMode.CN_A_SHARE_TRADING_DAY to "交易日",
+)
 private val DAY_LABELS = mapOf(
     DayOfWeek.MONDAY to "一",
     DayOfWeek.TUESDAY to "二",

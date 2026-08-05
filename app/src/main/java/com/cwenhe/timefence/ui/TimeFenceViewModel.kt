@@ -3,7 +3,12 @@ package com.cwenhe.timefence.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cwenhe.timefence.apps.InstalledApp
+import com.cwenhe.timefence.calendar.CalendarStatus
+import com.cwenhe.timefence.calendar.CalendarSyncResult
+import com.cwenhe.timefence.calendar.CalendarSnapshot
 import com.cwenhe.timefence.core.AppContainer
+import com.cwenhe.timefence.enforcement.SpeechLanguage
+import com.cwenhe.timefence.enforcement.SpeechSettings
 import com.cwenhe.timefence.permissions.PermissionStatus
 import com.cwenhe.timefence.rules.RuleEvaluation
 import com.cwenhe.timefence.rules.ScheduleRule
@@ -21,27 +26,41 @@ class TimeFenceViewModel(private val container: AppContainer) : ViewModel() {
     private val installedApps = MutableStateFlow<List<InstalledApp>>(emptyList())
     private val appsLoading = MutableStateFlow(true)
     private val errorMessage = MutableStateFlow<String?>(null)
+    private val speechSettings = MutableStateFlow(container.speechSettingsStore.read())
     private val clock = clockFlow()
     private val appState = combine(
         installedApps,
         appsLoading,
         errorMessage,
     ) { apps, loading, error -> AppState(apps, loading, error) }
+    private val auxiliaryState = combine(
+        appState,
+        container.calendarRepository.status,
+        speechSettings,
+    ) { apps, calendarStatus, speech -> AuxiliaryState(apps, calendarStatus, speech) }
 
     val uiState = combine(
-        container.scheduleRepository.observeRules(),
+        container.ruleSnapshot,
         container.permissionStatusRepository.status,
         clock,
-        appState,
-    ) { rules, permissions, now, apps ->
+        auxiliaryState,
+    ) { snapshot, permissions, now, auxiliary ->
+        val rules = snapshot.rules
         TimeFenceUiState(
             rules = rules,
             permissions = permissions,
-            evaluation = container.scheduleEvaluator.evaluate(now, rules),
-            installedApps = apps.items,
-            appsLoading = apps.loading,
-            errorMessage = apps.error,
+            evaluation = container.scheduleEvaluator.evaluate(
+                now = now,
+                rules = rules,
+                calendar = container.calendarRepository.snapshot.value,
+            ),
+            installedApps = auxiliary.apps.items,
+            appsLoading = auxiliary.apps.loading,
+            errorMessage = auxiliary.apps.error,
             now = now,
+            calendarStatus = auxiliary.calendarStatus,
+            calendarSnapshot = container.calendarRepository.snapshot.value,
+            speechSettings = auxiliary.speechSettings,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -88,6 +107,37 @@ class TimeFenceViewModel(private val container: AppContainer) : ViewModel() {
     /** 打开时界的系统应用信息页。 */
     fun openAppDetailsSettings() {
         container.systemSettingsNavigator.openAppDetailsSettings()
+    }
+
+    /** 打开系统语音合成设置，设备不支持时回退到声音设置。 */
+    fun openTextToSpeechSettings() {
+        container.systemSettingsNavigator.openTextToSpeechSettings()
+    }
+
+    /** 立即联网检查日历版本，失败时保留旧数据并向用户显示错误。 */
+    fun syncCalendar() {
+        viewModelScope.launch {
+            if (container.calendarRepository.syncNow() == CalendarSyncResult.FAILED) {
+                errorMessage.value = container.calendarRepository.status.value.lastError ?: "日历更新失败"
+            }
+        }
+    }
+
+    /** 更新全局语音开关，规则级开关保持不变。 */
+    fun setSpeechEnabled(enabled: Boolean) {
+        val updated = speechSettings.value.withEnabled(enabled)
+        container.speechSettingsStore.write(updated)
+        speechSettings.value = updated
+    }
+
+    /** 更新语音语言策略，选择关闭时同步关闭全局语音。 */
+    fun setSpeechLanguage(language: SpeechLanguage) {
+        val updated = speechSettings.value.copy(
+            enabled = speechSettings.value.enabled && language != SpeechLanguage.OFF,
+            language = language,
+        )
+        container.speechSettingsStore.write(updated)
+        speechSettings.value = updated
     }
 
     /** 重新读取设备上可由用户选择的桌面应用。 */
@@ -152,7 +202,11 @@ class TimeFenceViewModel(private val container: AppContainer) : ViewModel() {
         val rules = container.scheduleRepository.getRules()
         val rule = rules.firstOrNull { it.id == ruleId } ?: return
         val active = rule in container.scheduleEvaluator
-            .evaluate(ZonedDateTime.now(), rules)
+            .evaluate(
+                now = ZonedDateTime.now(),
+                rules = rules,
+                calendar = container.calendarRepository.snapshot.value,
+            )
             .activeRules
         require(!rule.lockWhileActive || !active) { "规则生效期间已锁定" }
     }
@@ -178,6 +232,13 @@ private data class AppState(
     val error: String?,
 )
 
+/** 组合应用列表、日历状态和语音设置，控制根状态 combine 的参数数量。 */
+private data class AuxiliaryState(
+    val apps: AppState,
+    val calendarStatus: CalendarStatus,
+    val speechSettings: SpeechSettings,
+)
+
 /** 根界面所需的不可变状态快照。 */
 data class TimeFenceUiState(
     val rules: List<ScheduleRule>,
@@ -187,6 +248,9 @@ data class TimeFenceUiState(
     val appsLoading: Boolean,
     val errorMessage: String?,
     val now: ZonedDateTime,
+    val calendarStatus: CalendarStatus,
+    val calendarSnapshot: CalendarSnapshot,
+    val speechSettings: SpeechSettings,
 ) {
     companion object {
         /** 在数据库首个值到达前提供稳定的空状态。 */
@@ -198,6 +262,9 @@ data class TimeFenceUiState(
             appsLoading = true,
             errorMessage = null,
             now = ZonedDateTime.now(),
+            calendarStatus = CalendarStatus.initial(),
+            calendarSnapshot = CalendarSnapshot.empty(),
+            speechSettings = SpeechSettings(enabled = false, language = SpeechLanguage.SYSTEM),
         )
     }
 }

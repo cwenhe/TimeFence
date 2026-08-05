@@ -3,6 +3,7 @@ package com.cwenhe.timefence.data
 import com.cwenhe.timefence.data.local.RuleAppEntity
 import com.cwenhe.timefence.data.local.RuleEntity
 import com.cwenhe.timefence.data.local.RuleWithApps
+import com.cwenhe.timefence.rules.CalendarMode
 import com.cwenhe.timefence.rules.ScheduleRule
 import java.time.DayOfWeek
 import org.junit.Assert.assertEquals
@@ -21,6 +22,9 @@ class ScheduleRepositoryMapperTest {
         assertEquals(listOf("mail.app", "video.app"), stored.packages)
         assertEquals(rule.id, stored.entity.id)
         assertEquals(rule.lockWhileActive, stored.entity.lockWhileActive)
+        assertEquals(CalendarMode.CN_A_SHARE_TRADING_DAY.name, stored.entity.scheduleMode)
+        assertEquals("交易时间结束", stored.entity.notificationMessage)
+        assertEquals(true, stored.entity.speakNotification)
     }
 
     /** 数据库关系转换后必须恢复同一份领域规则。 */
@@ -56,5 +60,8 @@ class ScheduleRepositoryMapperTest {
         packages = setOf("video.app", "mail.app"),
         enabled = true,
         lockWhileActive = true,
+        calendarMode = CalendarMode.CN_A_SHARE_TRADING_DAY,
+        notificationMessage = "交易时间结束",
+        speakNotification = true,
     )
 }
