@@ -19,13 +19,14 @@ tools/calendar/generate_calendar.py            # 确定性生成器，断言 248
 app/src/main/res/raw/zh_cn_calendar.json      # APK 内置同一份日历
 app/src/main/java/com/cwenhe/timefence/
   calendar/
-    CalendarMode.kt                            # 每周、工作日、交易日枚举
     CalendarSnapshot.kt                        # 内存日历查询与未知态
     CalendarDocument.kt                        # JSON 领域文档
     CalendarDocumentParser.kt                  # 严格文档校验
     CalendarRemoteDataSource.kt                # HTTPS、ETag、超时和大小限制
     CalendarRepository.kt                      # 内置资源、Room、同步与状态
     CalendarSyncWorker.kt                      # WorkManager 周期同步
+  rules/
+    CalendarMode.kt                            # 每周、工作日、交易日枚举
   data/local/
     CalendarEntities.kt                        # 日历逐日与元数据实体
     CalendarDao.kt                             # 日历查询和原子替换
@@ -215,11 +216,11 @@ python3 tools/calendar/generate_calendar.py
 
 - [ ] **步骤 4：重写服务事件路径**
 
-回调只复制包名、事件类型和可用的窗口变化位，然后请求处理器；不启动新协程、不读 Room。消费者读取一次规则快照、一次 `evaluateActive` 和一次可见窗口集合，将受限包集合与窗口集合求交。保留 `0/100/300/700ms` 边界补检，但每次只触发同一处理器。
+回调只复制包名、事件类型和可用的窗口变化位，然后请求处理器；不启动新协程、不读 Room。消费者读取一次规则快照、一次 `evaluateActive` 和一次可见窗口集合，将受限包集合与窗口集合求交。保留 `0/100/300/700ms` 边界补检，事件和边界请求通过同一互斥门串行处理。
 
 - [ ] **步骤 5：过滤事件并去重 HOME**
 
-`TYPE_WINDOW_STATE_CHANGED` 始终处理；`TYPE_WINDOWS_CHANGED` 只处理新增、移除、活动、焦点和画中画变化，厂商返回 0 时仍处理。窗口 ID 与包名作为身份，无 ID 时退化为包名。只有 HOME 返回 `true` 才标记已处理；活动规则消失或窗口离开时清理门状态。
+`TYPE_WINDOW_STATE_CHANGED` 始终处理；`TYPE_WINDOWS_CHANGED` 只处理新增、移除、活动、焦点和画中画变化，厂商返回 0 时仍处理。窗口身份使用包名和窗口 ID，无 ID 时退化为包名；系统接受 HOME 后以 250ms 退避最多尝试三次，窗口退为非活动后重新激活会开启新一轮拦截。活动规则消失或窗口离开时清理门状态。
 
 - [ ] **步骤 6：验证性能单测和构建**
 

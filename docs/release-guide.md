@@ -94,6 +94,17 @@ sha256sum -c timefence-0.1.0.apk.sha256
 
 发布任务先在只读 Job 中运行单元测试、Release Lint、`assembleRelease`、APK 验签和可选证书连续性校验，清理 JKS 后才上传 APK。第二个无密钥 Job 单独获得 `contents: write`，复核 SHA-256 后使用 GitHub CLI 创建 Release。任何验证失败、Secret 缺失、标签来源不合法或签名异常都会阻止 Release 创建。
 
+## 日历数据维护
+
+法定工作日和 A 股交易日只使用已经正式发布的年度公告。新增年份时：
+
+1. 在 `data/calendar/source/<年份>.json` 保存国务院、上交所和深交所公告地址，以及已人工复核的休假区间和调休日期。
+2. 更新 `tools/calendar/generate_calendar.py` 的输入年份、revision 和官方计数断言。
+3. 运行 `python3 tools/calendar/generate_calendar.py`，确认 `data/calendar/zh-CN.json` 与 `app/src/main/res/raw/zh_cn_calendar.json` 的 SHA-256 完全相同。
+4. 运行日历单测和完整 Android 验证后再推送 `main`；联网设备会从仓库 raw 文件更新，新 APK 同时携带最新兜底数据。
+
+官方年度尚未发布时不要用普通周一至周五生成完整年份。缺失年份应保持未知，使界面提示更新而不是误判规则。
+
 ## 文档站发布
 
 首次配置仓库时，进入“Settings -> Pages”，将 Source 设置为“GitHub Actions”。之后 `main` 分支中的 `README.md`、`docs/`、`mkdocs.yml` 或 `requirements-docs.txt` 发生变化时，“发布项目文档”Workflow 会严格构建并部署站点；仓库不提交生成的 `site/` 目录。
