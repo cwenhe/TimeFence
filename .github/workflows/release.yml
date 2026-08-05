@@ -20,10 +20,6 @@ jobs:
       name: release
     permissions:
       contents: read
-    outputs:
-      version_name: ${{ steps.version.outputs.version_name }}
-      version_code: ${{ steps.version.outputs.version_code }}
-      apk_name: ${{ steps.version.outputs.apk_name }}
 
     steps:
       - name: 检出完整源码历史
@@ -181,7 +177,7 @@ jobs:
       - name: 上传已验证的发布产物
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: timefence-release-${{ steps.version.outputs.version_name }}
+          name: timefence-release
           path: dist/
           if-no-files-found: error
           retention-days: 7
@@ -198,7 +194,7 @@ jobs:
       - name: 下载已验证的发布产物
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
-          name: timefence-release-${{ needs.build.outputs.version_name }}
+          name: timefence-release
           path: dist
 
       - name: 复核校验值并创建 Release
@@ -206,18 +202,19 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-          APK_NAME: ${{ needs.build.outputs.apk_name }}
         run: |
           set -euo pipefail
-          test -s "dist/${APK_NAME}"
-          test -s "dist/${APK_NAME}.sha256"
+          version_name="${GITHUB_REF_NAME#v}"
+          apk_name="timefence-${version_name}.apk"
+          test -s "dist/${apk_name}"
+          test -s "dist/${apk_name}.sha256"
           (
             cd dist
-            sha256sum -c "${APK_NAME}.sha256"
+            sha256sum -c "${apk_name}.sha256"
           )
           gh release create "${GITHUB_REF_NAME}" \
-            "dist/${APK_NAME}" \
-            "dist/${APK_NAME}.sha256" \
+            "dist/${apk_name}" \
+            "dist/${apk_name}.sha256" \
             --verify-tag \
             --title "时界 ${GITHUB_REF_NAME}" \
             --generate-notes
