@@ -1,0 +1,35 @@
+site_name: 时界文档
+site_description: 时界 Android 应用的安装、授权、诊断与发版文档
+site_dir: site
+
+theme:
+  name: material
+  language: zh
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+  palette:
+    scheme: default
+    primary: teal
+    accent: deep orange
+
+nav:
+  - 首页: index.md
+  - 荣耀 MagicOS 设置: honor-setup.md
+  - 诊断指南: diagnostics.md
+  - 发版指南: release-guide.md
+  - 设计档案:
+      - 产品设计规格: superpowers/specs/2026-08-05-timefence-design.md
+      - 实施与发版计划: superpowers/plans/2026-08-05-timefence-implementation.md
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - toc:
+      permalink: true
+
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
