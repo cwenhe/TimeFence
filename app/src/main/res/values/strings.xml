@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">时界</string>
+    <string name="accessibility_service_label">时界应用拦截服务</string>
+    <string name="accessibility_service_description">在规则生效时识别受限应用并返回桌面，不读取屏幕文字。</string>
+    <string name="block_overlay_default_rule">使用限制</string>
+    <string name="block_overlay_until">已限制到 %1$s</string>
+    <string name="block_overlay_close">关闭提示</string>
+</resources>
