@@ -17,6 +17,7 @@ import com.cwenhe.timefence.permissions.PermissionStatus
 import com.cwenhe.timefence.rules.CalendarMode
 import com.cwenhe.timefence.rules.ScheduleEvaluator
 import com.cwenhe.timefence.rules.ScheduleRule
+import com.cwenhe.timefence.suspension.SystemSuspendStatus
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -40,8 +41,10 @@ class ProtectionNotifier(
         permissions: PermissionStatus,
         now: ZonedDateTime = ZonedDateTime.now(),
         calendar: CalendarSnapshot = CalendarSnapshot.empty(),
+        systemSuspend: SystemSuspendStatus? = null,
     ) {
-        if (rules.none { it.enabled } || !permissions.notificationsAllowed) {
+        val managedCount = systemSuspend?.managedCount ?: 0
+        if ((rules.none { it.enabled } && managedCount == 0) || !permissions.notificationsAllowed) {
             notificationManager.cancel(NOTIFICATION_ID)
             return
         }
@@ -52,12 +55,19 @@ class ProtectionNotifier(
                 calendar.match(rule.calendarMode, now.toLocalDate()) == CalendarMatch.UNKNOWN
         }
         val title = when {
+            managedCount > 0 && systemSuspend?.gateway?.isReady != true -> "系统暂停待恢复"
+            managedCount > 0 && systemSuspend?.releasePending == true -> "正在解除系统暂停"
+            managedCount > 0 && evaluation.activeRules.isEmpty() -> "正在校正系统暂停"
             !permissions.protectionReady -> "时界需要设置"
             calendarNeedsUpdate && evaluation.activeRules.isEmpty() -> "日历需要更新"
             evaluation.activeRules.isNotEmpty() -> "限制生效中"
             else -> "保护已就绪"
         }
         val detail = when {
+            managedCount > 0 && systemSuspend?.gateway?.isReady != true ->
+                "启动 Shizuku 以恢复 $managedCount 个应用"
+            managedCount > 0 && systemSuspend?.releasePending == true -> "正在恢复 $managedCount 个应用"
+            managedCount > 0 && evaluation.activeRules.isEmpty() -> "正在恢复已离开规则的应用"
             !permissions.protectionReady -> "打开时界完成系统权限设置"
             calendarNeedsUpdate && evaluation.activeRules.isEmpty() -> "工作日与交易日规则暂不执行"
             evaluation.activeRules.isNotEmpty() -> if (calendarNeedsUpdate) {
@@ -76,7 +86,7 @@ class ProtectionNotifier(
             .setContentIntent(openAppPendingIntent())
             .setCategory(NotificationCompat.CATEGORY_STATUS)
             .setOnlyAlertOnce(true)
-            .setOngoing(permissions.protectionReady)
+            .setOngoing(permissions.protectionReady || managedCount > 0)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .build()
         runCatching { notificationManager.notify(NOTIFICATION_ID, notification) }

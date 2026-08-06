@@ -1,13 +1,14 @@
 package com.cwenhe.timefence.ui.settings
 
 import android.os.Build
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -15,28 +16,39 @@ import androidx.compose.material.icons.automirrored.outlined.VolumeUp
 import androidx.compose.material.icons.outlined.AccessibilityNew
 import androidx.compose.material.icons.outlined.Alarm
 import androidx.compose.material.icons.outlined.BatterySaver
-import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.Block
 import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.PhoneAndroid
-import androidx.compose.material.icons.outlined.ReportProblem
+import androidx.compose.material.icons.outlined.PowerSettingsNew
 import androidx.compose.material.icons.outlined.RecordVoiceOver
+import androidx.compose.material.icons.outlined.ReportProblem
+import androidx.compose.material.icons.outlined.Restore
 import androidx.compose.material.icons.outlined.Sync
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.cwenhe.timefence.BuildConfig
@@ -44,12 +56,15 @@ import com.cwenhe.timefence.calendar.CalendarStatus
 import com.cwenhe.timefence.enforcement.SpeechLanguage
 import com.cwenhe.timefence.enforcement.SpeechSettings
 import com.cwenhe.timefence.permissions.PermissionStatus
+import com.cwenhe.timefence.suspension.ShizukuBackend
+import com.cwenhe.timefence.suspension.ShizukuConnectionPhase
+import com.cwenhe.timefence.suspension.SystemSuspendStatus
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-/** 展示保护状态、日历同步、语音设置、荣耀后台入口和版本信息。 */
+/** 展示普通保护权限、可选系统暂停、日历、语音和应用设置。 */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
@@ -57,6 +72,7 @@ fun SettingsScreen(
     calendarStatus: CalendarStatus,
     today: LocalDate,
     speechSettings: SpeechSettings,
+    systemSuspend: SystemSuspendStatus,
     onAccessibility: () -> Unit,
     onExactAlarm: () -> Unit,
     onNotifications: () -> Unit,
@@ -67,10 +83,19 @@ fun SettingsScreen(
     onSpeechEnabled: (Boolean) -> Unit,
     onSpeechLanguage: (SpeechLanguage) -> Unit,
     onTextToSpeechSettings: () -> Unit,
+    onSystemSuspendEnabled: (Boolean) -> Unit,
+    onShizukuAction: () -> Unit,
+    onReleaseAllSuspensions: () -> Unit,
 ) {
+    var showEnableConfirmation by rememberSaveable { mutableStateOf(false) }
+    var showReleaseConfirmation by rememberSaveable { mutableStateOf(false) }
+
     Column(modifier = Modifier.fillMaxSize()) {
         TopAppBar(title = { Text("设置") })
-        LazyColumn(contentPadding = PaddingValues(bottom = 88.dp)) {
+        LazyColumn(
+            contentPadding = PaddingValues(bottom = 88.dp),
+            modifier = Modifier.testTag("settings-list"),
+        ) {
             item { SectionTitle("保护状态") }
             item {
                 SettingRow(
@@ -108,6 +133,56 @@ fun SettingsScreen(
                     onClick = onNotifications,
                 )
             }
+
+            item { SectionTitle("高级拦截") }
+            item {
+                SystemSuspendModeRow(
+                    status = systemSuspend,
+                    onEnableRequested = { showEnableConfirmation = true },
+                    onDisableRequested = { showReleaseConfirmation = true },
+                )
+            }
+            item {
+                SettingRow(
+                    icon = Icons.Outlined.PowerSettingsNew,
+                    title = "Shizuku 服务",
+                    detail = shizukuStatusDetail(systemSuspend),
+                    healthy = when (systemSuspend.gateway.phase) {
+                        ShizukuConnectionPhase.READY -> true
+                        ShizukuConnectionPhase.CONNECTING -> null
+                        else -> false
+                    },
+                    actionTag = "shizuku-action",
+                    onClick = onShizukuAction,
+                )
+            }
+            item {
+                SuspendRecoveryRow(
+                    status = systemSuspend,
+                    onReleaseRequested = { showReleaseConfirmation = true },
+                )
+            }
+            item {
+                Text(
+                    text = "系统暂停可能跨重启保留。非 Root 手机重启后，请先启动 Shizuku 以便时界恢复应用。",
+                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            if (systemSuspend.lastError != null) {
+                item {
+                    Text(
+                        text = systemSuspend.lastError,
+                        modifier = Modifier
+                            .padding(horizontal = 20.dp, vertical = 8.dp)
+                            .testTag("system-suspend-error"),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                }
+            }
+
             if (isHonorDevice()) {
                 item { SectionTitle("荣耀 MagicOS") }
                 item {
@@ -164,9 +239,141 @@ fun SettingsScreen(
             }
         }
     }
+
+    if (showEnableConfirmation) {
+        AlertDialog(
+            onDismissRequest = { showEnableConfirmation = false },
+            title = { Text("启用系统暂停模式？") },
+            text = { Text("规则生效时目标应用会被系统暂停。非 Root 手机重启后，需要重新启动 Shizuku 才能继续校正和恢复。") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showEnableConfirmation = false
+                        onSystemSuspendEnabled(true)
+                    },
+                ) {
+                    Text("启用")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showEnableConfirmation = false }) {
+                    Text("取消")
+                }
+            },
+        )
+    }
+    if (showReleaseConfirmation) {
+        AlertDialog(
+            onDismissRequest = { showReleaseConfirmation = false },
+            title = { Text("解除全部系统暂停？") },
+            text = { Text("时界将停止新增系统暂停，并恢复当前记录的 ${systemSuspend.managedCount} 个应用。") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showReleaseConfirmation = false
+                        if (systemSuspend.modeEnabled) {
+                            onSystemSuspendEnabled(false)
+                        } else {
+                            onReleaseAllSuspensions()
+                        }
+                    },
+                ) {
+                    Text("解除并关闭")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showReleaseConfirmation = false }) {
+                    Text("取消")
+                }
+            },
+        )
+    }
 }
 
-/** 展示全局语音总开关，不改变每条规则自己的朗读选择。 */
+/** 展示高级模式开关，并在风险操作前交由父级弹出确认。 */
+@Composable
+private fun SystemSuspendModeRow(
+    status: SystemSuspendStatus,
+    onEnableRequested: () -> Unit,
+    onDisableRequested: () -> Unit,
+) {
+    val switchEnabled = !status.busy && !status.releasePending &&
+        (status.modeEnabled || status.gateway.isReady)
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 84.dp)
+            .padding(horizontal = 20.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(Icons.Outlined.Block, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 14.dp),
+        ) {
+            Text("系统暂停模式", style = MaterialTheme.typography.titleMedium)
+            Text(
+                text = systemSuspendModeDetail(status),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Switch(
+            checked = status.modeEnabled,
+            onCheckedChange = { enabled ->
+                if (enabled) onEnableRequested() else onDisableRequested()
+            },
+            enabled = switchEnabled,
+            modifier = Modifier.testTag("system-suspend-switch"),
+        )
+    }
+    HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.18f))
+}
+
+/** 展示本地恢复责任数量和紧急解除入口。 */
+@Composable
+private fun SuspendRecoveryRow(
+    status: SystemSuspendStatus,
+    onReleaseRequested: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 76.dp)
+            .padding(horizontal = 20.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(Icons.Outlined.Restore, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 14.dp),
+        ) {
+            Text("恢复责任", style = MaterialTheme.typography.titleMedium)
+            Text(
+                text = if (status.releasePending) {
+                    "正在解除 ${status.managedCount} 个应用"
+                } else {
+                    "时界当前管理 ${status.managedCount} 个应用"
+                },
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        OutlinedButton(
+            onClick = onReleaseRequested,
+            enabled = !status.busy && status.managedCount > 0,
+            modifier = Modifier.testTag("release-all-button"),
+        ) {
+            Icon(Icons.Outlined.Restore, contentDescription = null)
+            Text("解除全部", modifier = Modifier.padding(start = 6.dp))
+        }
+    }
+    HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.18f))
+}
+
+/** 展示全局语音开关及厂商引擎隐私提示。 */
 @Composable
 private fun SpeechToggleRow(
     settings: SpeechSettings,
@@ -197,7 +404,7 @@ private fun SpeechToggleRow(
     HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.18f))
 }
 
-/** 使用三个紧凑选项切换系统语言、中文普通话和关闭策略。 */
+/** 使用互斥选项设置系统 TTS 的语言策略。 */
 @Composable
 private fun SpeechLanguageRow(
     selected: SpeechLanguage,
@@ -224,7 +431,7 @@ private fun SpeechLanguageRow(
     HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.18f))
 }
 
-/** 展示设置页的分组标题。 */
+/** 渲染设置分组标题。 */
 @Composable
 private fun SectionTitle(title: String) {
     Text(
@@ -236,21 +443,22 @@ private fun SectionTitle(title: String) {
     )
 }
 
-/** 展示一项系统设置及其健康状态。 */
+/** 渲染可打开系统页面或执行单一状态动作的设置行。 */
 @Composable
 private fun SettingRow(
     icon: ImageVector,
     title: String,
     detail: String,
     healthy: Boolean?,
+    actionTag: String? = null,
     onClick: () -> Unit,
 ) {
     Column {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(76.dp)
-                .padding(horizontal = 20.dp),
+                .heightIn(min = 76.dp)
+                .padding(horizontal = 20.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
@@ -273,7 +481,10 @@ private fun SettingRow(
                     tint = if (healthy) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
                 )
             }
-            IconButton(onClick = onClick) {
+            IconButton(
+                onClick = onClick,
+                modifier = if (actionTag == null) Modifier else Modifier.testTag(actionTag),
+            ) {
                 Icon(Icons.Outlined.ChevronRight, contentDescription = "打开$title")
             }
         }
@@ -281,12 +492,36 @@ private fun SettingRow(
     }
 }
 
-/** 判断当前设备是否需要展示荣耀或华为后台管理入口。 */
+/** 根据厂商决定是否展示荣耀后台管理入口。 */
 private fun isHonorDevice(): Boolean =
     Build.MANUFACTURER.equals("HONOR", ignoreCase = true) ||
         Build.MANUFACTURER.equals("HUAWEI", ignoreCase = true)
 
-/** 将日历覆盖和最近同步错误转换为一行可扫描状态。 */
+/** 将高级模式、恢复流程和 Shizuku 可用性压缩为一行说明。 */
+private fun systemSuspendModeDetail(status: SystemSuspendStatus): String = when {
+    status.releasePending && status.gateway.isReady -> "正在解除全部暂停，不会新增暂停"
+    status.releasePending -> "等待 Shizuku 恢复后继续解除"
+    status.modeEnabled && status.gateway.isReady -> "系统暂停与无障碍双重保护"
+    status.modeEnabled -> "已开启；Shizuku 不可用时只保留无障碍拦截"
+    status.gateway.isReady -> "规则生效时直接暂停目标应用"
+    else -> "配置 Shizuku 后可启用"
+}
+
+/** 将 Shizuku 生命周期状态转换为设置行说明。 */
+private fun shizukuStatusDetail(status: SystemSuspendStatus): String = when (status.gateway.phase) {
+    ShizukuConnectionPhase.NOT_RUNNING -> status.gateway.message ?: "服务未运行，点击打开 Shizuku"
+    ShizukuConnectionPhase.UNSUPPORTED -> status.gateway.message ?: "版本过旧，点击更新"
+    ShizukuConnectionPhase.PERMISSION_REQUIRED -> status.gateway.message ?: "未授权，点击授权"
+    ShizukuConnectionPhase.CONNECTING -> "正在连接 UserService"
+    ShizukuConnectionPhase.ERROR -> status.gateway.message ?: "连接异常，点击重试"
+    ShizukuConnectionPhase.READY -> when (status.gateway.backend) {
+        ShizukuBackend.ROOT -> "已授权，Root 后端"
+        ShizukuBackend.ADB -> "已授权，ADB 后端"
+        ShizukuBackend.NONE -> "已授权，UserService 已连接"
+    }
+}
+
+/** 将日历覆盖与同步状态转换为设置行说明。 */
 private fun calendarStatusDetail(status: CalendarStatus, today: LocalDate): String = when {
     status.isSyncing -> "正在联网更新"
     !status.covers(today) && status.lastError != null -> "未覆盖 $today，更新失败，相关规则暂不执行"
@@ -304,7 +539,7 @@ private fun calendarStatusDetail(status: CalendarStatus, today: LocalDate): Stri
     else -> "尚未加载日历，点击更新"
 }
 
-/** 将最近联网成功时间转换为设备本地的紧凑日期时间。 */
+/** 使用设备时区格式化日历最近同步时间。 */
 private fun formatSyncTime(epochMillis: Long): String = Instant.ofEpochMilli(epochMillis)
     .atZone(ZoneId.systemDefault())
     .format(SYNC_TIME_FORMATTER)

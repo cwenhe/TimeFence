@@ -55,6 +55,17 @@ class SystemSettingsNavigator(context: Context) {
         fallback = Intent(Settings.ACTION_SOUND_SETTINGS),
     )
 
+    /** 优先打开已安装的 Shizuku，未安装时打开官方下载页。 */
+    fun openShizuku(): Boolean {
+        val downloadIntent = Intent(Intent.ACTION_VIEW, Uri.parse(SHIZUKU_DOWNLOAD_URL))
+        val launchIntent = appContext.packageManager.getLaunchIntentForPackage(SHIZUKU_PACKAGE)
+        return if (launchIntent == null) {
+            startSafely(downloadIntent)
+        } else {
+            startSafely(launchIntent, downloadIntent)
+        }
+    }
+
     /** 优先探测荣耀或华为后台启动管理页，不可用时回退到标准电池优化页。 */
     fun openHonorBackgroundSettings(): Boolean {
         val candidates = listOf(
@@ -107,5 +118,7 @@ class SystemSettingsNavigator(context: Context) {
 
     private companion object {
         const val ACTION_TEXT_TO_SPEECH_SETTINGS = "com.android.settings.TTS_SETTINGS"
+        const val SHIZUKU_PACKAGE = "moe.shizuku.privileged.api"
+        const val SHIZUKU_DOWNLOAD_URL = "https://shizuku.rikka.app/download/"
     }
 }

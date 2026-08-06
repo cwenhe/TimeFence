@@ -106,6 +106,7 @@ fun TimeFenceApp(viewModel: TimeFenceViewModel) {
                     calendarStatus = state.calendarStatus,
                     today = state.now.toLocalDate(),
                     speechSettings = state.speechSettings,
+                    systemSuspend = state.systemSuspend,
                     onAccessibility = viewModel::openAccessibilitySettings,
                     onExactAlarm = viewModel::openExactAlarmSettings,
                     onNotifications = viewModel::openNotificationSettings,
@@ -116,6 +117,9 @@ fun TimeFenceApp(viewModel: TimeFenceViewModel) {
                     onSpeechEnabled = viewModel::setSpeechEnabled,
                     onSpeechLanguage = viewModel::setSpeechLanguage,
                     onTextToSpeechSettings = viewModel::openTextToSpeechSettings,
+                    onSystemSuspendEnabled = viewModel::setSystemSuspendEnabled,
+                    onShizukuAction = viewModel::handleShizukuAction,
+                    onReleaseAllSuspensions = viewModel::releaseAllSystemSuspensions,
                 )
             }
             composable(ROUTE_EDITOR) { entry ->

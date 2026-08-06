@@ -40,6 +40,7 @@ class BlockAccessibilityService : AccessibilityService() {
 
     private var lastForegroundPackage: String? = null
     private var boundaryCheckJob: Job? = null
+    private var lastSystemSuspendSignalAt = 0L
 
     /** 连接后立即补检当前窗口、发布连接状态并恢复下一条时间边界。 */
     override fun onServiceConnected() {
@@ -128,6 +129,15 @@ class BlockAccessibilityService : AccessibilityService() {
         if (evaluation.blockedPackages.isEmpty()) {
             visibleWindowGate.clear()
             return@withLock false
+        }
+        // 窗口事件是闹钟延迟时的第二条系统暂停触发路径；请求本身会在合并队列中去重。
+        val suspendStatus = appContainer.systemSuspendController.status.value
+        val suspendSignalNow = SystemClock.uptimeMillis()
+        if (suspendStatus.modeEnabled &&
+            suspendSignalNow - lastSystemSuspendSignalAt >= SYSTEM_SUSPEND_SIGNAL_MIN_INTERVAL_MILLIS
+        ) {
+            lastSystemSuspendSignalAt = suspendSignalNow
+            appContainer.systemSuspendController.requestReconcile()
         }
         val candidate = visibleWindowGate.next(
             windows = resolveActiveWindows(),
@@ -236,6 +246,7 @@ class BlockAccessibilityService : AccessibilityService() {
     companion object {
         private const val TAG = "BlockAccessibility"
         private const val HOME_VERIFICATION_DELAY_MILLIS = 250L
+        private const val SYSTEM_SUSPEND_SIGNAL_MIN_INTERVAL_MILLIS = 500L
         private val BOUNDARY_RETRY_OFFSETS_MILLIS = longArrayOf(0L, 100L, 300L, 700L)
     }
 }

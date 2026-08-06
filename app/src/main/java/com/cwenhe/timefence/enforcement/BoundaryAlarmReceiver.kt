@@ -23,9 +23,11 @@ class BoundaryAlarmReceiver : BroadcastReceiver() {
                 val container = (context.applicationContext as TimeFenceApplication).container
                 container.calendarRepository.initialize()
                 val rules = container.scheduleRepository.getRules()
+                val now = ZonedDateTime.now()
+                container.reconcileSystemSuspensions(rules, now)
                 container.boundaryAlarmScheduler.reschedule(
                     rules = rules,
-                    now = ZonedDateTime.now(),
+                    now = now,
                     calendar = container.calendarRepository.snapshot.value,
                 )
                 val permissions = container.permissionStatusRepository.refresh()
@@ -33,6 +35,7 @@ class BoundaryAlarmReceiver : BroadcastReceiver() {
                     rules = rules,
                     permissions = permissions,
                     calendar = container.calendarRepository.snapshot.value,
+                    systemSuspend = container.systemSuspendController.status.value,
                 )
             } catch (error: Exception) {
                 Log.e(TAG, "处理规则边界失败", error)

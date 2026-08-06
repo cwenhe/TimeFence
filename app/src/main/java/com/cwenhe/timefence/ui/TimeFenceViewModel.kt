@@ -12,6 +12,8 @@ import com.cwenhe.timefence.enforcement.SpeechSettings
 import com.cwenhe.timefence.permissions.PermissionStatus
 import com.cwenhe.timefence.rules.RuleEvaluation
 import com.cwenhe.timefence.rules.ScheduleRule
+import com.cwenhe.timefence.suspension.ShizukuConnectionPhase
+import com.cwenhe.timefence.suspension.SystemSuspendStatus
 import java.time.ZonedDateTime
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,7 +39,10 @@ class TimeFenceViewModel(private val container: AppContainer) : ViewModel() {
         appState,
         container.calendarRepository.status,
         speechSettings,
-    ) { apps, calendarStatus, speech -> AuxiliaryState(apps, calendarStatus, speech) }
+        container.systemSuspendController.status,
+    ) { apps, calendarStatus, speech, systemSuspend ->
+        AuxiliaryState(apps, calendarStatus, speech, systemSuspend)
+    }
 
     val uiState = combine(
         container.ruleSnapshot,
@@ -61,12 +66,14 @@ class TimeFenceViewModel(private val container: AppContainer) : ViewModel() {
             calendarStatus = auxiliary.calendarStatus,
             calendarSnapshot = container.calendarRepository.snapshot.value,
             speechSettings = auxiliary.speechSettings,
+            systemSuspend = auxiliary.systemSuspend,
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
         initialValue = TimeFenceUiState.initial(
             container.permissionStatusRepository.status.value,
+            container.systemSuspendController.status.value,
         ),
     )
 
@@ -74,9 +81,43 @@ class TimeFenceViewModel(private val container: AppContainer) : ViewModel() {
         loadApps()
     }
 
-    /** 刷新无障碍、精确闹钟、通知和电池策略状态。 */
+    /** 刷新普通 Android 权限与 Shizuku 连接状态。 */
     fun refreshPermissions() {
         container.permissionStatusRepository.refresh()
+        container.systemSuspendController.refreshShizuku()
+    }
+
+    /** 根据当前阶段执行打开 Shizuku、申请授权或重连动作。 */
+    fun handleShizukuAction() {
+        when (uiState.value.systemSuspend.gateway.phase) {
+            ShizukuConnectionPhase.PERMISSION_REQUIRED ->
+                container.systemSuspendController.requestShizukuPermission()
+
+            ShizukuConnectionPhase.ERROR,
+            ShizukuConnectionPhase.CONNECTING,
+            -> container.systemSuspendController.refreshShizuku()
+
+            ShizukuConnectionPhase.NOT_RUNNING,
+            ShizukuConnectionPhase.UNSUPPORTED,
+            ShizukuConnectionPhase.READY,
+            -> container.systemSettingsNavigator.openShizuku()
+        }
+    }
+
+    /** 切换高级模式；关闭动作会先进入只恢复状态。 */
+    fun setSystemSuspendEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            val result = container.systemSuspendController.setModeEnabled(enabled)
+            if (!result.success) errorMessage.value = result.message ?: "系统暂停模式切换失败"
+        }
+    }
+
+    /** 触发紧急解除，并在全部恢复成功后关闭高级模式。 */
+    fun releaseAllSystemSuspensions() {
+        viewModelScope.launch {
+            val result = container.systemSuspendController.releaseAll()
+            if (!result.success) errorMessage.value = result.message ?: "解除全部暂停失败"
+        }
     }
 
     /** 打开系统无障碍设置。 */
@@ -232,11 +273,12 @@ private data class AppState(
     val error: String?,
 )
 
-/** 组合应用列表、日历状态和语音设置，控制根状态 combine 的参数数量。 */
+/** 组合应用列表、日历、语音和系统暂停状态，控制根状态 combine 的参数数量。 */
 private data class AuxiliaryState(
     val apps: AppState,
     val calendarStatus: CalendarStatus,
     val speechSettings: SpeechSettings,
+    val systemSuspend: SystemSuspendStatus,
 )
 
 /** 根界面所需的不可变状态快照。 */
@@ -251,10 +293,14 @@ data class TimeFenceUiState(
     val calendarStatus: CalendarStatus,
     val calendarSnapshot: CalendarSnapshot,
     val speechSettings: SpeechSettings,
+    val systemSuspend: SystemSuspendStatus,
 ) {
     companion object {
         /** 在数据库首个值到达前提供稳定的空状态。 */
-        fun initial(permissions: PermissionStatus): TimeFenceUiState = TimeFenceUiState(
+        fun initial(
+            permissions: PermissionStatus,
+            systemSuspend: SystemSuspendStatus,
+        ): TimeFenceUiState = TimeFenceUiState(
             rules = emptyList(),
             permissions = permissions,
             evaluation = RuleEvaluation(emptyList(), emptySet(), null),
@@ -265,6 +311,7 @@ data class TimeFenceUiState(
             calendarStatus = CalendarStatus.initial(),
             calendarSnapshot = CalendarSnapshot.empty(),
             speechSettings = SpeechSettings(enabled = false, language = SpeechLanguage.SYSTEM),
+            systemSuspend = systemSuspend,
         )
     }
 }
