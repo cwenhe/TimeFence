@@ -5,7 +5,7 @@
 - 本项目是普通 Android 应用，不依赖 APS/SCH 产品。
 - 技术栈固定为 Kotlin、Jetpack Compose、Material 3、Room 和 Kotlin Coroutines，单模块入口为 `app`。
 - 项目仅处理本地定时应用限制；网络只用于读取项目维护的公开日历，不增加账号、云同步、使用统计、广告或付费能力。
-- 不声称强制结束目标应用进程；核心行为是通过 `AccessibilityService` 返回桌面并持续拦截。
+- 不声称强制结束目标应用进程；默认核心行为是通过 `AccessibilityService` 返回桌面并持续拦截。可选 Shizuku 模式只调用系统包暂停能力，并明确说明其授权、兼容性和恢复边界。
 
 ## 环境与命令
 

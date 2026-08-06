@@ -73,6 +73,7 @@ Manifest 显式声明 `rikka.shizuku.ShizukuProvider`。应用进程通过 Binde
 `SystemSuspendSettingsStore` 使用独立 SharedPreferences 保存：
 
 - `modeEnabled`：高级模式是否启用，默认 `false`。
+- `releasePending`：用户已请求退出或紧急恢复；为 `true` 时只执行恢复，不新增暂停。
 - `managedPackages`：时界当前承担恢复责任的包集合。
 
 认领包时先同步落盘再执行暂停；命令失败则撤销认领。恢复成功后才移除记录。这样即使进程在命令后被系统终止，下一次启动仍能继续恢复。
