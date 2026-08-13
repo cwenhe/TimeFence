@@ -51,7 +51,7 @@ class BlockAccessibilityService : AccessibilityService() {
         rescheduleBoundary()
     }
 
-    /** 只复制事件原始值并提交合并信号，避免窗口事件创建无限并发协程。 */
+    /** 复制事件原始值并提交合并信号；时界自身仅在真实窗口查询命中时参与拦截。 */
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if (event == null || !shouldProcessEvent(event)) return
         val packageName = event.packageName?.toString()
@@ -225,7 +225,6 @@ class BlockAccessibilityService : AccessibilityService() {
                 add(VisibleAppWindow(packageName = rootPackage, isActive = true))
             }
         }
-            .filter { window -> window.packageName != this.packageName }
             .distinctBy { window -> window.packageName to window.windowId }
         return resolved.ifEmpty {
             listOfNotNull(lastForegroundPackage)

@@ -5,6 +5,17 @@ import org.junit.Test
 
 /** 覆盖协调器执行前的最终关键包过滤。 */
 class ProtectedPackagePolicyTest {
+    /** 验证系统暂停策略仍会过滤时界自身而保留普通目标。 */
+    @Test
+    fun `时界自身不会进入系统暂停目标`() {
+        val allowed = ProtectedPackagePolicy.filterAllowed(
+            candidates = setOf("com.cwenhe.timefence", "com.example.video"),
+            protectedPackages = setOf("com.cwenhe.timefence"),
+        )
+
+        assertEquals(setOf("com.example.video"), allowed)
+    }
+
     /** 验证策略同时过滤关键包和非法包名。 */
     @Test
     fun `关键包和非法包名不会进入暂停目标`() {

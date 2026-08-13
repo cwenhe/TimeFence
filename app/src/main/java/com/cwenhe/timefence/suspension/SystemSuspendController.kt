@@ -1,5 +1,6 @@
 package com.cwenhe.timefence.suspension
 
+import com.cwenhe.timefence.BuildConfig
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineDispatcher
@@ -182,7 +183,15 @@ class SystemSuspendController(
     }
 
     /** 恢复一个管理包；未安装或已经恢复时只清理本地责任。 */
+    /** 释放已管理包；时界自身只清理异常账本，不向 Shizuku 发送恢复命令。 */
     private suspend fun releaseManagedPackage(packageName: String): String? {
+        if (packageName == BuildConfig.APPLICATION_ID) {
+            return if (store.removeManagedPackage(packageName)) {
+                null
+            } else {
+                "无法清理受保护应用 $packageName 的恢复记录"
+            }
+        }
         val state = inspector.inspect(packageName)
         if (state == PackageSuspensionState.NOT_INSTALLED || state == PackageSuspensionState.NOT_SUSPENDED) {
             return if (store.removeManagedPackage(packageName)) null else "无法更新 $packageName 的恢复记录"

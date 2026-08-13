@@ -28,6 +28,19 @@ class ScheduleEvaluatorTest {
         assertFalse(evaluator.evaluate(at(10, 0), listOf(rule)).blockedPackages.contains("demo.app"))
     }
 
+    /** 验证时界自身在规则结束边界后立即恢复可用。 */
+    @Test
+    fun `时界自身在规则边界内受限并在结束时恢复`() {
+        val rule = rule(
+            startMinute = 8 * 60,
+            endMinute = 10 * 60,
+            packages = setOf("com.cwenhe.timefence"),
+        )
+
+        assertTrue("com.cwenhe.timefence" in evaluator.evaluate(at(8, 0), listOf(rule)).blockedPackages)
+        assertFalse("com.cwenhe.timefence" in evaluator.evaluate(at(10, 0), listOf(rule)).blockedPackages)
+    }
+
     /** 验证跨午夜规则在次日结束前仍归属于前一天的重复星期。 */
     @Test
     fun `跨午夜规则归属于开始日`() {

@@ -92,6 +92,32 @@ class SystemSuspendControllerTest {
         assertEquals(listOf(Command(VIDEO_PACKAGE, suspended = true)), fixture.gateway.commands)
     }
 
+    /** 验证协调器不会认领或暂停时界自身。 */
+    @Test
+    fun `时界自身不会被协调器认领或暂停`() = runTest {
+        val fixture = fixture(setOf(SELF_PACKAGE, VIDEO_PACKAGE))
+        fixture.protectedPackages += SELF_PACKAGE
+
+        fixture.controller.setModeEnabled(true)
+
+        assertEquals(listOf(Command(VIDEO_PACKAGE, suspended = true)), fixture.gateway.commands)
+        assertEquals(setOf(VIDEO_PACKAGE), fixture.store.state.value.managedPackages)
+    }
+
+    /** 验证旧版本残留的时界管理记录不会触发自身恢复命令。 */
+    @Test
+    fun `解除旧的时界管理记录不会发送恢复命令`() = runTest {
+        val fixture = fixture(emptySet())
+        fixture.protectedPackages += SELF_PACKAGE
+        fixture.store.claimPackage(SELF_PACKAGE)
+
+        fixture.controller.setModeEnabled(true)
+        fixture.controller.releaseAll()
+
+        assertTrue(fixture.gateway.commands.isEmpty())
+        assertTrue(fixture.store.state.value.managedPackages.isEmpty())
+    }
+
     /** 验证活动管理包若被恢复会在下一次校正重新暂停。 */
     @Test
     fun `被外部恢复的活动管理包会重新暂停`() = runTest {
@@ -261,5 +287,6 @@ class SystemSuspendControllerTest {
         const val CHAT_PACKAGE = "com.example.chat"
         const val NEW_PACKAGE = "com.example.newapp"
         const val LAUNCHER_PACKAGE = "com.honor.launcher"
+        const val SELF_PACKAGE = "com.cwenhe.timefence"
     }
 }

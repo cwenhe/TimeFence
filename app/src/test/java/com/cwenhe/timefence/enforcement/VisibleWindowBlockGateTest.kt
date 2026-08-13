@@ -7,6 +7,17 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class VisibleWindowBlockGateTest {
+    /** 验证时界自身作为受限包时也能被窗口门禁选中并去重。 */
+    @Test
+    fun `时界自身窗口可以按规则处理`() {
+        val gate = VisibleWindowBlockGate()
+        val window = VisibleAppWindow("com.cwenhe.timefence")
+
+        assertEquals(window, gate.next(listOf(window), setOf("com.cwenhe.timefence")))
+        assertTrue(gate.markHomeSucceeded(window))
+        assertNull(gate.next(listOf(window), setOf("com.cwenhe.timefence")))
+    }
+
     /** 验证 HOME 成功后同一小窗持续可见时不会再次返回候选。 */
     @Test
     fun `同一窗口只处理一次`() {

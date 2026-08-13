@@ -15,11 +15,15 @@ class InstalledAppRepository(
     context: Context,
     private val protectedPackageResolver: ProtectedPackageResolver = ProtectedPackageResolver(context),
 ) {
-    private val packageManager = context.applicationContext.packageManager
+    private val appContext = context.applicationContext
+    private val packageManager = appContext.packageManager
 
     /** 在 IO 线程加载、去重并按本地语言排序可选应用。 */
     suspend fun loadLaunchableApps(): List<InstalledApp> = withContext(Dispatchers.IO) {
-        val excludedPackages = protectedPackageResolver.resolve()
+        val excludedPackages = pickerExcludedPackages(
+            protectedPackages = protectedPackageResolver.resolve(),
+            ownPackageName = appContext.packageName,
+        )
         val labelCollator = Collator.getInstance(Locale.getDefault())
         queryActivities(launcherIntent())
             .asSequence()
@@ -55,3 +59,9 @@ class InstalledAppRepository(
             packageManager.queryIntentActivities(intent, PackageManager.MATCH_ALL)
         }
 }
+
+/** 为应用选择器移除时界自身，保留系统暂停层使用的完整保护集合。 */
+internal fun pickerExcludedPackages(
+    protectedPackages: Set<String>,
+    ownPackageName: String,
+): Set<String> = protectedPackages - ownPackageName
