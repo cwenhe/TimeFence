@@ -100,7 +100,6 @@ class ProtectionNotifier(
             .setSmallIcon(R.drawable.ic_timefence_notification)
             .setContentTitle(feedback.ruleName.ifBlank { "时界限制" })
             .setContentText(feedback.text)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(feedback.text))
             .setContentIntent(openAppPendingIntent())
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             .setAutoCancel(true)
@@ -125,7 +124,7 @@ class ProtectionNotifier(
         val eventChannel = NotificationChannel(
             EVENT_CHANNEL_ID,
             "拦截提示",
-            NotificationManager.IMPORTANCE_DEFAULT,
+            NotificationManager.IMPORTANCE_LOW,
         ).apply {
             description = "显示自定义的应用拦截提示"
         }
